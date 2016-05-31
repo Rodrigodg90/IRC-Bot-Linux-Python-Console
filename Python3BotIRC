@@ -1,0 +1,62 @@
+#!/usr/bin/env python3
+import socket
+
+server = 'irc.root-me.org'
+channel = '#root-me_challenge'
+NICK = 'ErickOsorio12'
+IDENT = 'ErickOsorio12'
+REALNAME = 'ErickOsorio3'
+port = 6667
+
+def joinchan(chan):
+    ircsock.send(bytes('JOIN %s\r\n' % chan, 'UTF-8'))
+
+
+def ping(): # This is our first function! It will respond to server Pings.
+    ircsock.send(bytes("PRIVMSG Candy !ep1 \r\n", 'UTF-8'))
+
+def respuesta(res): # This is our first function! It will respond to server Pings.
+    ircsock.send(bytes("PRIVMSG Candy !ep1 -rep %s \r\n" % (res), 'UTF-8'))
+
+def ping1(mensaje): # This is our first function! It will respond to server Pings.
+    ircsock.send(bytes("PRIVMSG ErickOsorio hello \r\n" % (), 'UTF-8'))
+    ircsock.send(bytes('PRIVMSG ErickOsorio %s \r\n' % (mensaje), 'UTF-8'))
+    string_1 = mensaje[58] + mensaje[59] + mensaje[60] #Primer numero
+    f1 = float(string_1)
+    string_2 = mensaje[64] + mensaje[65] + mensaje[66] + mensaje[67] #Segundo numero
+    f2 = float(string_2)
+    t1 = (f1)**0.5 #raiz de primer nuemero
+    t2 = t1 * f2
+    t3 = round (t2, 2)
+    print (f1)
+    print (f2)
+    print (t3)
+    respuesta(t3)
+
+
+def send_message(chan, msg):
+    ircsock.send(bytes('PRIVMSG %s :%s\r\n' % (chan, msg), 'UTF-8'))
+
+ircsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+ircsock.connect((server, port)) # Here we connect to the server using the port 6667
+ircsock.send(bytes("USER "+ NICK +" "+ NICK +" "+ NICK +" :This bot\n", 'UTF-8')) # user authentication
+ircsock.send(bytes("NICK "+ NICK +"\n", 'UTF-8')) # here we actually assign the nick to the bot
+
+joinchan(channel) # Join the channel using the functions we previously defined
+
+while 1: # Be careful with these! it might send you to an infinite loop
+  ircmsg = ircsock.recv(2048).decode() # receive data from the server
+  ircmsg = ircmsg.strip('\n\r') # removing any unnecessary linebreaks.
+  print(ircmsg) # Here we print what's coming from the server
+  if ircmsg.find(' PRIVMSG ')!=-1:
+     nick=ircmsg.split('!')[0][1:]
+  if ircmsg.find("PING :") != -1: # if the server pings us then we've got to respond!
+    ping()
+  if ircmsg.find('!ep1') != -1:
+  	send_message(channel, "Quit saying that! \n")
+  if ircmsg.find('!Candy') != -1:
+    mensaje = ircmsg
+    ping1(mensaje)
+    #print(ircmsg)
+  if ircmsg.find(":Hello "+ NICK) != -1: # If we can find "Hello Mybot" it will call the function hello()
+    hello()
